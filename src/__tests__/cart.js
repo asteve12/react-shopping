@@ -1,9 +1,117 @@
 import App from "../App";
-import {render,userEvent,screen} from "@testing-library/react"
+import { render, waitForElementToBeRemoved, queryByAttribute, screen, logRoles, findByText } from "@testing-library/react"
 
-test("test if data fetch is displayed ", () => {
+ import userEvent from "@testing-library/user-event"   
+import { QueryClient, QueryClientProvider } from "react-query";
+import { rest } from "msw"
+import { setupServer } from "msw/node"
 
-    render(<App></App>)
+const server = setupServer(
+    rest.get("https://fakestoreapi.com/products", (req, res, ctx) => {
+        return res(
+            ctx.json([
+                {"id":1,"title":"Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops","price":109.95,"description":"Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday","category":"men's clothing","image":"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg","rating":{"rate":3.9,"count":120}}
+            ])
+        )
+        
+    })
+)
 
+
+beforeAll(() => {
+    // Establish requests interception layer before all tests.
+    server.listen()
+})
+  
+
+afterAll(() => {
+    // Clean up after all tests are done, preventing this
+    // interception layer from affecting irrelevant tests.
+    server.close()
+  })
+  
+test("test home page",async () => {
+    const queryObj = new QueryClient
+    const getById = queryByAttribute.bind(null, 'id');
+    const user = userEvent.setup()
+    
+    let dom = render(
+        < QueryClientProvider client={queryObj}> 
+        <App></App>
+        </QueryClientProvider>)
+    
+    await waitForElementToBeRemoved(() => getById(dom.container, 'loader'))
+
+    let addCartBtn = screen.getByText(/add to cart/i)
+    await user.click(addCartBtn)
+    let amountSel = dom.container.getElementsByClassName("MuiBadge-colorError")[0]
+    expect(amountSel).toHaveTextContent("1")
+
+    
+
+    
+
+    
+    
+    
+  
+
+    
+})
+
+
+test("test adding and removing of cart item", async () => {
+    const queryObj = new QueryClient
+    const getById = queryByAttribute.bind(null, 'id');
+    const user = userEvent.setup()
+    
+    let dom = render(
+        < QueryClientProvider client={queryObj}> 
+        <App></App>
+        </QueryClientProvider>)
+    
+    await waitForElementToBeRemoved(() => getById(dom.container, 'loader'))
+
+    let addCartBtn = screen.getByText(/add to cart/i)
+    await user.click(addCartBtn)
+    let amountSel = dom.container.getElementsByClassName("MuiBadge-colorError")[0]
+ 
+    expect(amountSel).toHaveTextContent("1")
+
+    let openCartBtn = dom.container.getElementsByClassName("MuiButtonBase-root MuiIconButton-root sc-eCYdqJ lmTCEp")[0]
+    await user.click(openCartBtn)
+
+    let cartTxt = await screen.findByText("Your shopping cart") 
+    let buttonContainer = dom.container.getElementsByClassName("buttons")
+    console.log("buttonContainer",buttonContainer[0])
+    
+
+
+  
+     
+    
+
+
+    // let productImg = screen.getByAltText("product img")
+    // expect(productImg.src).toContain("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg")
+    
+ 
+    // let buttonContainer = dom.container.getElementsByClassName("buttons")[0]
+    // console.log("doming", buttonContainer)
+    // let deBtn = buttonContainer.firstChild();
+    // let inBtn = buttonContainer.lastChild()
+    // let priceCOntainer = dom.container.getElementsByClassName("informations")[0]
+    // let price = buttonContainer.firstChild();
+    // let total = buttonContainer.lastChild()
+    // user.click(deBtn)
+    // expect(total).toHaveTextContent("Total: $0.00")
+    // let cartContainer =  dom.container.getElementsByTagName("aside")[0]
+    // expect(cartContainer).not.toBeInTheDocument()
+    // console.log("hello", cartContainer)
+  
+   
+   
+    //  expect(cartContainer).toHaveLength(3)
+    
     
 })

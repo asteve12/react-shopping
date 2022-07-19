@@ -74,7 +74,7 @@ const App = () => {
   
 };
 
-if(isLoading) return <LinearProgress/>
+if(isLoading) return  <div id="loader"><LinearProgress/></div> 
 
 if(error) return <div>something went wrong ........</div>
  
@@ -90,7 +90,7 @@ if(error) return <div>something went wrong ........</div>
         ></Cart>
       </Drawer>
       <StyledButton onClick={() => setCartOpen(true)}>
-        <Badge badgeContent={getTotalItems(cartItems)} color="error" >
+        <Badge badgeContent={getTotalItems(cartItems)} className="my" color="error" >
           <AddShoppingCart></AddShoppingCart>
         </Badge>
       </StyledButton>
