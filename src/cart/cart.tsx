@@ -19,7 +19,7 @@ const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart }) => {
     
 
     return (
-        <Wrapper>
+        <Wrapper data-testid="modal" >
             <h2>Your shopping cart</h2>
             {cartItems.length === 0 ? <p>No items in cart. </p>:null }
             {cartItems.map(item => (

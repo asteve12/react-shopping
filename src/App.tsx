@@ -82,7 +82,7 @@ if(error) return <div>something went wrong ........</div>
    
   return (
     <Wrapper className="App">
-      <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
+      <Drawer  anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
         <Cart
           cartItems={cartItems}
           addToCart={handleAddToCart}
@@ -90,7 +90,7 @@ if(error) return <div>something went wrong ........</div>
         ></Cart>
       </Drawer>
       <StyledButton onClick={() => setCartOpen(true)}>
-        <Badge badgeContent={getTotalItems(cartItems)} className="my" color="error" >
+        <Badge overlap="rectangular" badgeContent={getTotalItems(cartItems)} className="my" color="error" >
           <AddShoppingCart></AddShoppingCart>
         </Badge>
       </StyledButton>

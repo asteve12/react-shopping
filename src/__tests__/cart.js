@@ -1,5 +1,5 @@
 import App from "../App";
-import { render, waitForElementToBeRemoved, queryByAttribute, screen, logRoles, findByText } from "@testing-library/react"
+import { render, waitForElementToBeRemoved, queryByAttribute, screen,waitFor, logRoles, findByText } from "@testing-library/react"
 
  import userEvent from "@testing-library/user-event"   
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -81,9 +81,36 @@ test("test adding and removing of cart item", async () => {
     let openCartBtn = dom.container.getElementsByClassName("MuiButtonBase-root MuiIconButton-root sc-eCYdqJ lmTCEp")[0]
     await user.click(openCartBtn)
 
-    let cartTxt = await screen.findByText("Your shopping cart") 
-    let buttonContainer = dom.container.getElementsByClassName("buttons")
-    console.log("buttonContainer",buttonContainer[0])
+    await waitFor(() => screen.getByText(/Your shopping cart/i))
+    await screen.findByText("Your shopping cart")
+
+    let  cartWrapper = dom.container.getElementsByTagName("aside")[0]
+  
+    let img = screen.getByAltText("product img")
+   expect(img.src).toBe("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg")
+  
+    let increaseBtn = screen.getByText("+")
+    let decreaseBtn = screen.getByText("-")
+    let priceText = screen.getByText(/price/i)
+    let totalTxt = screen.queryAllByText(/total/i)
+    let btnCont = screen.getByTestId('amount')
+    
+    expect(priceText).toHaveTextContent("Price: $109.95")
+    expect(totalTxt[0]).toHaveTextContent("Total: $109.95")
+    await user.click(increaseBtn)
+    expect(btnCont).toHaveTextContent("2")
+    expect(totalTxt[0]).toHaveTextContent("Total: $219")
+
+    await user.click(decreaseBtn)
+    expect(btnCont).toHaveTextContent("1")
+    expect(totalTxt[0]).toHaveTextContent("Total: $109.95")
+    
+    // let amtToBuy = btnCont.children[1]
+   
+  
+   
+   
+    
     
 
 
